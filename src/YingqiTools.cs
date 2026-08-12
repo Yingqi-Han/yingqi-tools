@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using KeyboardCoolDownLock;
 using LidWorkMode;
@@ -37,7 +38,11 @@ namespace YingqiTools
         public string StatusSummary { get { return _control != null && _control.IsActive ? "\u5df2启\u7528" : "\u672a启\u7528"; } }
         public Image Icon { get { return SystemIcons.Application.ToBitmap(); } }
         public Control CreateControl() { if (_control == null) _control = new LidWorkModeControl(); return _control; }
-        public bool RestoreAndWait() { return _control == null || _control.RestoreAndWait(15000); }
+        public bool RestoreAndWait()
+        {
+            if (_control == null && !System.IO.File.Exists(GuardPaths.StateFile)) return true;
+            return ((LidWorkModeControl)CreateControl()).RestoreAndWait(15000);
+        }
     }
 
     internal sealed class MainForm : Form
@@ -98,6 +103,7 @@ namespace YingqiTools
 
     internal static class Program
     {
+        private static Mutex _mutex;
         [DllImport("user32.dll")] private static extern bool SetProcessDPIAware();
         [STAThread]
         private static int Main(string[] args)
@@ -105,11 +111,15 @@ namespace YingqiTools
             try
             {
                 if (args.Length > 0 && args[0] == "--self-test") { PowerPlanService.ReadCurrent(); KeyboardLockSession.SelfTest(); return 0; }
+                bool owns;
+                _mutex = new Mutex(true, "Local\\YingqiTools.SingleInstance", out owns);
+                if (!owns) { MessageBox.Show("Yingqi Tools \u5df2\u5728\u8fd0\u884c\u3002", "Yingqi Tools", MessageBoxButtons.OK, MessageBoxIcon.Information); return 2; }
                 try { SetProcessDPIAware(); } catch { }
                 Application.EnableVisualStyles(); Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new MainForm()); return 0;
             }
             catch (Exception ex) { MessageBox.Show(ex.ToString(), "Yingqi Tools", MessageBoxButtons.OK, MessageBoxIcon.Error); return 1; }
+            finally { if (_mutex != null) _mutex.Dispose(); }
         }
     }
 }
