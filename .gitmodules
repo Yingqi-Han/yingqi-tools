@@ -1,0 +1,6 @@
+[submodule "components/keyboard-cooldown-lock"]
+	path = components/keyboard-cooldown-lock
+	url = https://github.com/Yingqi-Han/keyboard-cooldown-lock.git
+[submodule "components/lid-work-mode"]
+	path = components/lid-work-mode
+	url = https://github.com/Yingqi-Han/lid-work-mode.git

@@ -1,0 +1,18 @@
+name: build
+on:
+  push:
+  pull_request:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build and self-test
+        shell: powershell
+        run: .\build.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YingqiTools-portable-unsigned
+          path: build/
