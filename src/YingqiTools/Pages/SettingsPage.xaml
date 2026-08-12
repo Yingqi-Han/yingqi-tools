@@ -4,7 +4,7 @@
     xmlns:models="clr-namespace:YingqiTools.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="设置">
-  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" PanningMode="VerticalOnly">
     <Grid MaxWidth="820" Margin="0,28,0,40" HorizontalAlignment="Left">
       <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
       <StackPanel>
