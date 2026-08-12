@@ -1,0 +1,49 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to package and upload
+        required: true
+        default: v2.0.0
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag }}
+          submodules: recursive
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: |
+            **/packages.lock.json
+
+      - name: Build, test, and publish
+        shell: pwsh
+        run: ./build.ps1 -LockedMode
+
+      - name: Create release archive and checksum
+        shell: pwsh
+        run: |
+          $archive = "YingqiTools-${{ inputs.tag }}-win-x64-unsigned.zip"
+          Compress-Archive -LiteralPath build/publish/* -DestinationPath $archive -CompressionLevel Optimal
+          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $archive).Hash.ToLowerInvariant()
+          "$hash  $archive" | Set-Content -Encoding ascii "$archive.sha256"
+
+      - name: Upload release assets
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ inputs.tag }}" "YingqiTools-${{ inputs.tag }}-win-x64-unsigned.zip" "YingqiTools-${{ inputs.tag }}-win-x64-unsigned.zip.sha256" --repo "${{ github.repository }}" --clobber
