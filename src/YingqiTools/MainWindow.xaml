@@ -1,0 +1,59 @@
+<ui:FluentWindow x:Class="YingqiTools.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Yingqi Tools"
+    Width="1040" Height="680" MinWidth="900" MinHeight="600"
+    WindowStartupLocation="CenterScreen"
+    ExtendsContentIntoTitleBar="True"
+    WindowBackdropType="Mica">
+  <Grid>
+    <ui:NavigationView x:Name="RootNavigation"
+        Padding="36,0,36,0"
+        PaneDisplayMode="Left"
+        OpenPaneLength="244"
+        CompactPaneLength="56"
+        IsBackButtonVisible="Collapsed"
+        IsPaneToggleVisible="True"
+        TitleBar="{Binding ElementName=WindowTitleBar}"
+        FrameMargin="0">
+      <ui:NavigationView.MenuItems>
+        <ui:NavigationViewItem x:Name="OverviewItem" Content="概览" TargetPageTag="overview" Click="Overview_Click">
+          <ui:NavigationViewItem.Icon><ui:SymbolIcon Symbol="Home24" /></ui:NavigationViewItem.Icon>
+        </ui:NavigationViewItem>
+        <ui:NavigationViewItem Content="键盘锁" TargetPageTag="keyboard" Click="Keyboard_Click">
+          <ui:NavigationViewItem.Icon><ui:SymbolIcon Symbol="Keyboard24" /></ui:NavigationViewItem.Icon>
+        </ui:NavigationViewItem>
+        <ui:NavigationViewItem Content="合盖继续运行" TargetPageTag="lid" Click="Lid_Click">
+          <ui:NavigationViewItem.Icon><ui:SymbolIcon Symbol="Laptop24" /></ui:NavigationViewItem.Icon>
+        </ui:NavigationViewItem>
+      </ui:NavigationView.MenuItems>
+      <ui:NavigationView.FooterMenuItems>
+        <ui:NavigationViewItem Content="设置" TargetPageTag="settings" Click="Settings_Click">
+          <ui:NavigationViewItem.Icon><ui:SymbolIcon Symbol="Settings24" /></ui:NavigationViewItem.Icon>
+        </ui:NavigationViewItem>
+      </ui:NavigationView.FooterMenuItems>
+    </ui:NavigationView>
+
+    <ui:TitleBar x:Name="WindowTitleBar"
+        Title="Yingqi Tools"
+        ShowClose="True"
+        ShowMaximize="True"
+        ShowMinimize="True"
+        CloseWindowByDoubleClickOnIcon="True">
+      <ui:TitleBar.Header>
+        <StackPanel Orientation="Horizontal" Margin="2,0,8,0">
+          <Grid Width="24" Height="24">
+            <Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+            <Border Margin="1" CornerRadius="3" Background="{DynamicResource SystemAccentColorPrimaryBrush}" />
+            <Border Grid.Column="1" Margin="1" CornerRadius="3" Background="{DynamicResource SystemAccentColorPrimaryBrush}" Opacity="0.78" />
+            <Border Grid.Row="1" Margin="1" CornerRadius="3" Background="{DynamicResource SystemAccentColorPrimaryBrush}" Opacity="0.78" />
+            <Border Grid.Row="1" Grid.Column="1" Margin="1" CornerRadius="3" Background="{DynamicResource SystemAccentColorPrimaryBrush}" Opacity="0.55" />
+          </Grid>
+          <TextBlock Margin="10,0,0,0" Text="Yingqi Tools" FontSize="13" VerticalAlignment="Center" />
+        </StackPanel>
+      </ui:TitleBar.Header>
+    </ui:TitleBar>
+  </Grid>
+</ui:FluentWindow>

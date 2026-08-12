@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/YingqiTools/YingqiTools.csproj" />
+  <Project Path="tests/YingqiTools.Tests/YingqiTools.Tests.csproj" />
+</Solution>

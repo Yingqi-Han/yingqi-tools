@@ -1,8 +1,13 @@
 build/
+bin/
+obj/
+publish/
+.nuget/
 *.exe
 *.dll
 *.pdb
 *.ico
+!src/YingqiTools/Assets/YingqiTools.ico
 *.log
 *.tmp
 .vs/
