@@ -38,6 +38,21 @@ if ($LASTEXITCODE -ne 0) { throw 'Build failed.' }
 & $dotnet test (Join-Path $root 'tests\YingqiTools.Tests\YingqiTools.Tests.csproj') -c Release --no-build --no-restore
 if ($LASTEXITCODE -ne 0) { throw 'Tests failed.' }
 
+# Submodule test projects are intentionally not ProjectReferences of the app
+# solution. Run them explicitly so a release cannot skip their safety gates.
+$keyboardRestoreArgs = @('restore', (Join-Path $keyboard 'KeyboardCooldownLock.slnx'))
+if ($LockedMode) { $keyboardRestoreArgs += '--locked-mode' }
+& $dotnet @keyboardRestoreArgs
+if ($LASTEXITCODE -ne 0) { throw 'Keyboard component restore failed.' }
+& $dotnet test (Join-Path $keyboard 'tests\KeyboardLockComponent.Tests\KeyboardLockComponent.Tests.csproj') -c Release --no-restore
+if ($LASTEXITCODE -ne 0) { throw 'Keyboard component tests failed.' }
+$lidRestoreArgs = @('restore', (Join-Path $lid 'LidWorkMode.slnx'))
+if ($LockedMode) { $lidRestoreArgs += '--locked-mode' }
+& $dotnet @lidRestoreArgs
+if ($LASTEXITCODE -ne 0) { throw 'Lid component restore failed.' }
+& $dotnet test (Join-Path $lid 'tests\LidWorkMode.Tests\LidWorkMode.Tests.csproj') -c Release --no-restore
+if ($LASTEXITCODE -ne 0) { throw 'Lid component tests failed.' }
+
 $publish = Join-Path $build 'publish'
 & $dotnet publish (Join-Path $root 'src\YingqiTools\YingqiTools.csproj') -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishTrimmed=false --no-restore -o $publish
 if ($LASTEXITCODE -ne 0) { throw 'Yingqi Tools publish failed.' }

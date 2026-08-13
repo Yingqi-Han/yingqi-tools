@@ -71,7 +71,7 @@ public partial class MainWindow : FluentWindow
             e.Cancel = true;
             return;
         }
-        if (!_lidControl.IsActive)
+        if (!_lidControl.RequiresRecovery)
         {
             _allowClose = true;
             base.OnClosing(e);
