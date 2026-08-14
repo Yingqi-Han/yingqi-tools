@@ -124,10 +124,10 @@
       "yingqitools": {
         "type": "Project",
         "dependencies": {
-          "ClipboardHistoryComponent": "[1.0.0, )",
+          "ClipboardHistoryComponent": "[1.0.2, )",
           "CommunityToolkit.Mvvm": "[8.4.2, )",
           "KeyboardLockComponent": "[2.0.1, )",
-          "LidWorkModeComponent": "[2.0.1, )",
+          "LidWorkModeComponent": "[2.0.3, )",
           "Microsoft.Extensions.DependencyInjection": "[10.0.11, )",
           "WPF-UI": "[4.3.0, )"
         }
