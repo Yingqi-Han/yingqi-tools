@@ -27,14 +27,28 @@ public sealed class SettingsServiceTests
     }
 
     [Fact]
-    public void SaveContainsThemeOnly()
+    public void SaveContainsThemeAndClipboardWindowPreferenceOnly()
     {
         string directory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         string path = Path.Combine(directory, "settings.json");
         SettingsService service = new(path);
         service.SetTheme(ThemePreference.Dark);
         using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
-        Assert.Single(document.RootElement.EnumerateObject());
+        Assert.Equal(2, document.RootElement.EnumerateObject().Count());
         Assert.Equal("Dark", document.RootElement.GetProperty("Theme").GetString());
+        Assert.True(document.RootElement.GetProperty("ClipboardWindowTopmost").GetBoolean());
+    }
+
+    [Fact]
+    public void ClipboardTopmost_DefaultsTrueAndPersists()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        string path = Path.Combine(directory, "settings.json");
+        SettingsService service = new(path);
+        Assert.True(service.ClipboardWindowTopmost);
+
+        service.SetClipboardWindowTopmost(false);
+
+        Assert.False(new SettingsService(path).ClipboardWindowTopmost);
     }
 }

@@ -9,10 +9,12 @@ $env:DOTNET_NOLOGO = '1'
 
 $keyboard = Join-Path $root 'components\keyboard-cooldown-lock'
 $lid = Join-Path $root 'components\lid-work-mode'
+$clipboard = Join-Path $root 'components\clipboard-history'
 $requiredProjects = @(
     (Join-Path $keyboard 'src\KeyboardLockComponent\KeyboardLockComponent.csproj'),
     (Join-Path $lid 'src\LidWorkModeComponent\LidWorkModeComponent.csproj'),
     (Join-Path $lid 'src\PowerGuard\PowerGuard.csproj')
+    (Join-Path $clipboard 'src\ClipboardHistoryComponent\ClipboardHistoryComponent.csproj')
 )
 foreach ($project in $requiredProjects) {
     if (-not (Test-Path -LiteralPath $project)) { throw 'Submodules are missing or stale. Run git submodule update --init --recursive.' }
@@ -52,6 +54,12 @@ if ($LockedMode) { $lidRestoreArgs += '--locked-mode' }
 if ($LASTEXITCODE -ne 0) { throw 'Lid component restore failed.' }
 & $dotnet test (Join-Path $lid 'tests\LidWorkMode.Tests\LidWorkMode.Tests.csproj') -c Release --no-restore
 if ($LASTEXITCODE -ne 0) { throw 'Lid component tests failed.' }
+$clipboardRestoreArgs = @('restore', (Join-Path $clipboard 'ClipboardHistory.slnx'))
+if ($LockedMode) { $clipboardRestoreArgs += '--locked-mode' }
+& $dotnet @clipboardRestoreArgs
+if ($LASTEXITCODE -ne 0) { throw 'Clipboard component restore failed.' }
+& $dotnet test (Join-Path $clipboard 'tests\ClipboardHistoryComponent.Tests\ClipboardHistoryComponent.Tests.csproj') -c Release --no-restore
+if ($LASTEXITCODE -ne 0) { throw 'Clipboard component tests failed.' }
 
 $publish = Join-Path $build 'publish'
 & $dotnet publish (Join-Path $root 'src\YingqiTools\YingqiTools.csproj') -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishTrimmed=false --no-restore -o $publish
@@ -71,4 +79,7 @@ Copy-Item -LiteralPath (Join-Path $root 'THIRD-PARTY-NOTICES.md') -Destination $
 
 $selfTest = Start-Process (Join-Path $publish 'YingqiTools.exe') -ArgumentList '--self-test' -PassThru -Wait
 if ($selfTest.ExitCode -ne 0) { throw "Self-test failed: $($selfTest.ExitCode)" }
+$clipboardSmokeData = Join-Path $build 'clipboard-smoke-data'
+$clipboardSmokeTest = Start-Process (Join-Path $publish 'YingqiTools.exe') -ArgumentList @('--clipboard-smoke-test', '--clipboard-smoke-data', $clipboardSmokeData) -PassThru -Wait
+if ($clipboardSmokeTest.ExitCode -ne 0) { throw "Clipboard smoke test failed: $($clipboardSmokeTest.ExitCode)" }
 Get-ChildItem -LiteralPath $publish -File | Select-Object Name, Length, LastWriteTime

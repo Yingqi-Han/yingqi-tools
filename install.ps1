@@ -1,5 +1,5 @@
 param(
-    [string]$InstallDirectory = (Join-Path $env:LOCALAPPDATA 'Programs\YingqiTools'),
+    [string]$InstallDirectory = 'D:\Programs\YingqiTools',
     [switch]$SkipBuild,
     [switch]$DoNotLaunch
 )
@@ -15,8 +15,17 @@ $sourceApp = Join-Path $publish 'YingqiTools.exe'
 $sourceGuard = Join-Path $publish 'PowerGuard.exe'
 if (-not (Test-Path -LiteralPath $sourceApp) -or -not (Test-Path -LiteralPath $sourceGuard)) { throw 'Publish output is incomplete.' }
 
-$guardInstall = Start-Process $sourceGuard -ArgumentList 'install' -Verb RunAs -PassThru -Wait
-if ($guardInstall.ExitCode -ne 0) { throw "PowerGuard installation failed: $($guardInstall.ExitCode)" }
+$installedGuard = Join-Path $env:ProgramFiles 'YingqiTools\PowerGuard\PowerGuard.exe'
+$guardUpToDate = $false
+if (Test-Path -LiteralPath $installedGuard) {
+    $sourceVersion = [version](Get-Item -LiteralPath $sourceGuard).VersionInfo.FileVersion
+    $installedVersion = [version](Get-Item -LiteralPath $installedGuard).VersionInfo.FileVersion
+    $guardUpToDate = $installedVersion -ge $sourceVersion
+}
+if (-not $guardUpToDate) {
+    $guardInstall = Start-Process $sourceGuard -ArgumentList 'install' -Verb RunAs -PassThru -Wait
+    if ($guardInstall.ExitCode -ne 0) { throw "PowerGuard installation failed: $($guardInstall.ExitCode)" }
+}
 
 $resolvedInstall = [System.IO.Path]::GetFullPath($InstallDirectory)
 if ([System.IO.Path]::GetPathRoot($resolvedInstall) -eq $resolvedInstall) { throw "Unsafe installation path: $resolvedInstall" }
@@ -24,6 +33,8 @@ New-Item -ItemType Directory -Force -Path $resolvedInstall | Out-Null
 Copy-Item -LiteralPath $sourceApp -Destination (Join-Path $resolvedInstall 'YingqiTools.exe') -Force
 Copy-Item -LiteralPath (Join-Path $publish 'LICENSE') -Destination $resolvedInstall -Force
 Copy-Item -LiteralPath (Join-Path $publish 'THIRD-PARTY-NOTICES.md') -Destination $resolvedInstall -Force
+$dataDirectory = Join-Path $resolvedInstall 'Data\ClipboardHistory'
+New-Item -ItemType Directory -Force -Path $dataDirectory | Out-Null
 
 $desktop = [Environment]::GetFolderPath('Desktop')
 $shortcutPath = Join-Path $desktop 'Yingqi Tools.lnk'
@@ -46,5 +57,5 @@ if (-not $DoNotLaunch) { Start-Process (Join-Path $resolvedInstall 'YingqiTools.
 [pscustomobject]@{
     Installed = $resolvedInstall
     Shortcut = $shortcutPath
-    PowerGuard = 'C:\Program Files\YingqiTools\PowerGuard\PowerGuard.exe'
+    PowerGuard = $installedGuard
 }

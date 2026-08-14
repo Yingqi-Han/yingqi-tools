@@ -4,3 +4,6 @@
 [submodule "components/lid-work-mode"]
 	path = components/lid-work-mode
 	url = https://github.com/Yingqi-Han/lid-work-mode.git
+[submodule "components/clipboard-history"]
+	path = components/clipboard-history
+	url = https://github.com/Yingqi-Han/clipboard-history.git

@@ -4,20 +4,21 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="概览">
   <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" PanningMode="VerticalOnly">
-    <Grid MaxWidth="880" Margin="0,28,0,40" HorizontalAlignment="Left">
+    <Grid MaxWidth="880" Margin="0,28,36,40" HorizontalAlignment="Stretch">
       <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
       <StackPanel>
         <TextBlock Style="{StaticResource PageTitle}" Text="概览" />
-        <TextBlock Style="{StaticResource PageDescription}" Text="两个临时工具，关闭 Yingqi Tools 后不会在后台常驻。" />
+        <TextBlock Style="{StaticResource PageDescription}" Text="三个本地工具；关闭 Yingqi Tools 后不会在后台常驻。" />
       </StackPanel>
 
       <Grid Grid.Row="1" Margin="0,28,0,0">
+        <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="20"/><RowDefinition Height="*"/></Grid.RowDefinitions>
         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-        <ui:Card Padding="24" MinHeight="250">
+        <ui:Card Padding="24" MinHeight="220">
           <Grid>
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <Grid>
-              <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
               <Border Width="48" Height="48" CornerRadius="12" Background="{DynamicResource ControlAltFillColorSecondaryBrush}">
                 <ui:SymbolIcon Symbol="Keyboard24" FontSize="24" />
               </Border>
@@ -25,18 +26,17 @@
                 <TextBlock Text="键盘锁" FontSize="18" FontWeight="SemiBold" />
                 <TextBlock Text="鼠标仍然可用" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
               </StackPanel>
-              <ui:Badge Grid.Column="2" Content="{Binding KeyboardStatus}" Appearance="Secondary" VerticalAlignment="Top" />
             </Grid>
             <TextBlock Grid.Row="1" Margin="0,24,0,24" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="适合清洁键盘或让电脑散热。自动超时，随时可以用鼠标解锁。" />
             <ui:Button Grid.Row="2" Height="40" Appearance="Primary" Content="快速锁定 15 分钟" Command="{Binding QuickLockCommand}" AutomationProperties.Name="快速锁定键盘 15 分钟" />
           </Grid>
         </ui:Card>
 
-        <ui:Card Grid.Column="2" Padding="24" MinHeight="250">
+        <ui:Card Grid.Column="2" Padding="24" MinHeight="220">
           <Grid>
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <Grid>
-              <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
               <Border Width="48" Height="48" CornerRadius="12" Background="{DynamicResource ControlAltFillColorSecondaryBrush}">
                 <ui:SymbolIcon Symbol="Laptop24" FontSize="24" />
               </Border>
@@ -44,10 +44,49 @@
                 <TextBlock Text="合盖继续运行" FontSize="18" FontWeight="SemiBold" />
                 <TextBlock Text="仅本次会话" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
               </StackPanel>
-              <ui:Badge Grid.Column="2" Content="{Binding LidStatus}" Appearance="Secondary" VerticalAlignment="Top" />
             </Grid>
             <TextBlock Grid.Row="1" Margin="0,24,0,24" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="需要进入配置页手动启用并确认 UAC；关闭工具箱即恢复启用前原值。" />
             <ui:Button Grid.Row="2" Height="40" Content="配置" Click="ConfigureLid_Click" AutomationProperties.Name="配置合盖继续运行" />
+          </Grid>
+        </ui:Card>
+        <ui:Card Grid.Row="2" Padding="24" MinHeight="220">
+        <Grid>
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+          <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <Border Width="48" Height="48" CornerRadius="12" Background="{DynamicResource ControlAltFillColorSecondaryBrush}">
+              <ui:SymbolIcon Symbol="Clipboard24" FontSize="24" />
+            </Border>
+            <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+              <TextBlock Text="剪贴板历史" FontSize="18" FontWeight="SemiBold" />
+              <TextBlock Text="文本和图片 · 本地加密" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
+          </Grid>
+          <TextBlock Grid.Row="1" Margin="0,20,0,18" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+              Text="从 Win+V 增量保存最近内容。置顶小窗可以最小化，复制后不会自动消失。" />
+          <WrapPanel Grid.Row="2">
+            <ui:Button Margin="0,0,10,0" Height="40" Appearance="Primary" Content="打开历史" Click="OpenClipboard_Click" />
+            <ui:Button Height="40" Content="打开置顶小窗" Click="OpenClipboardWindow_Click" />
+          </WrapPanel>
+        </Grid>
+        </ui:Card>
+
+        <ui:Card Grid.Row="2" Grid.Column="2" Padding="24" MinHeight="220">
+          <Grid>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+              <Border Width="48" Height="48" CornerRadius="12" Background="{DynamicResource ControlAltFillColorSecondaryBrush}">
+                <ui:SymbolIcon Symbol="Settings24" FontSize="24" />
+              </Border>
+              <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                <TextBlock Text="设置" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock Text="主题与小窗偏好" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+              </StackPanel>
+            </Grid>
+            <TextBlock Grid.Row="1" Margin="0,20,0,18" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Text="跟随系统主题，或选择浅色、深色；只保存界面偏好，不保存危险功能状态。" />
+            <ui:Button Grid.Row="2" Height="40" HorizontalAlignment="Left" Content="打开设置" Click="OpenSettings_Click" />
           </Grid>
         </ui:Card>
       </Grid>
