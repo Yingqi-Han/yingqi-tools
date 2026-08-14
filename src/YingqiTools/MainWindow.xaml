@@ -9,7 +9,7 @@
     WindowBackdropType="Mica">
   <Grid>
     <ui:NavigationView x:Name="RootNavigation"
-        Padding="36,0,36,0"
+        Padding="36,0,0,0"
         PaneDisplayMode="Left"
         OpenPaneLength="244"
         CompactPaneLength="56"
@@ -26,6 +26,9 @@
         </ui:NavigationViewItem>
         <ui:NavigationViewItem Content="合盖继续运行" TargetPageTag="lid" Click="Lid_Click">
           <ui:NavigationViewItem.Icon><ui:SymbolIcon Symbol="Laptop24" /></ui:NavigationViewItem.Icon>
+        </ui:NavigationViewItem>
+        <ui:NavigationViewItem Content="剪贴板历史" TargetPageTag="clipboard" Click="Clipboard_Click">
+          <ui:NavigationViewItem.Icon><ui:SymbolIcon Symbol="Clipboard24" /></ui:NavigationViewItem.Icon>
         </ui:NavigationViewItem>
       </ui:NavigationView.MenuItems>
       <ui:NavigationView.FooterMenuItems>

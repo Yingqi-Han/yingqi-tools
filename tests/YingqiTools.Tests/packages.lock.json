@@ -1,7 +1,7 @@
 {
   "version": 2,
   "dependencies": {
-    "net10.0-windows7.0": {
+    "net10.0-windows10.0.17763": {
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
         "requested": "[18.0.1, )",
@@ -103,6 +103,12 @@
           "xunit.extensibility.core": "[2.9.3]"
         }
       },
+      "clipboardhistorycomponent": {
+        "type": "Project",
+        "dependencies": {
+          "WPF-UI": "[4.3.0, )"
+        }
+      },
       "keyboardlockcomponent": {
         "type": "Project",
         "dependencies": {
@@ -118,9 +124,10 @@
       "yingqitools": {
         "type": "Project",
         "dependencies": {
+          "ClipboardHistoryComponent": "[1.0.0, )",
           "CommunityToolkit.Mvvm": "[8.4.2, )",
-          "KeyboardLockComponent": "[2.0.0, )",
-          "LidWorkModeComponent": "[2.0.0, )",
+          "KeyboardLockComponent": "[2.0.1, )",
+          "LidWorkModeComponent": "[2.0.1, )",
           "Microsoft.Extensions.DependencyInjection": "[10.0.11, )",
           "WPF-UI": "[4.3.0, )"
         }

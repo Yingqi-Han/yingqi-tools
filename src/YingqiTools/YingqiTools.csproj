@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>YingqiTools</AssemblyName>
-    <Version>2.0.1</Version>
+    <Version>2.1.0</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\YingqiTools.ico</ApplicationIcon>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -29,5 +29,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\components\keyboard-cooldown-lock\src\KeyboardLockComponent\KeyboardLockComponent.csproj" />
     <ProjectReference Include="..\..\components\lid-work-mode\src\LidWorkModeComponent\LidWorkModeComponent.csproj" />
+    <ProjectReference Include="..\..\components\clipboard-history\src\ClipboardHistoryComponent\ClipboardHistoryComponent.csproj" />
   </ItemGroup>
 </Project>

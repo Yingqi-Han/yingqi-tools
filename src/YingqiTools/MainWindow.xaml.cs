@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using LidWorkMode;
 using YingqiTools.Pages;
+using YingqiTools.Services;
 using YingqiTools.ViewModels;
 using Wpf.Ui.Controls;
 
@@ -11,6 +12,7 @@ namespace YingqiTools;
 public partial class MainWindow : FluentWindow
 {
     private readonly LidWorkModeControl _lidControl;
+    private readonly ClipboardWindowService _clipboardWindowService;
     private readonly Dictionary<string, Page> _pages;
     private bool _allowClose;
     private bool _restoring;
@@ -19,20 +21,27 @@ public partial class MainWindow : FluentWindow
         DashboardPage dashboard,
         KeyboardPage keyboard,
         LidPage lid,
+        ClipboardPage clipboard,
         SettingsPage settings,
         LidWorkModeControl lidControl,
+        ClipboardWindowService clipboardWindowService,
         DashboardViewModel dashboardViewModel)
     {
         InitializeComponent();
         _lidControl = lidControl;
+        _clipboardWindowService = clipboardWindowService;
         _pages = new Dictionary<string, Page>
         {
             ["overview"] = dashboard,
             ["keyboard"] = keyboard,
             ["lid"] = lid,
+            ["clipboard"] = clipboard,
             ["settings"] = settings
         };
         dashboard.LidConfigurationRequested += (_, _) => Navigate("lid");
+        dashboard.ClipboardRequested += (_, _) => Navigate("clipboard");
+        dashboard.ClipboardWindowRequested += (_, _) => _clipboardWindowService.Show();
+        dashboard.SettingsRequested += (_, _) => Navigate("settings");
         Loaded += (_, _) =>
         {
             RootNavigation.ReplaceContent(dashboard);
@@ -43,6 +52,7 @@ public partial class MainWindow : FluentWindow
     private void Overview_Click(object sender, RoutedEventArgs e) => Navigate("overview", false);
     private void Keyboard_Click(object sender, RoutedEventArgs e) => Navigate("keyboard", false);
     private void Lid_Click(object sender, RoutedEventArgs e) => Navigate("lid", false);
+    private void Clipboard_Click(object sender, RoutedEventArgs e) => Navigate("clipboard", false);
     private void Settings_Click(object sender, RoutedEventArgs e) => Navigate("settings", false);
 
     public void Navigate(string tag, bool selectItem = true)
@@ -73,6 +83,7 @@ public partial class MainWindow : FluentWindow
         }
         if (!_lidControl.RequiresRecovery)
         {
+            _clipboardWindowService.Close();
             _allowClose = true;
             base.OnClosing(e);
             return;
@@ -86,6 +97,7 @@ public partial class MainWindow : FluentWindow
         _restoring = false;
         if (restored)
         {
+            _clipboardWindowService.Close();
             _allowClose = true;
             _ = Dispatcher.BeginInvoke(Close);
             return;
