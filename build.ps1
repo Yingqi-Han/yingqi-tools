@@ -69,7 +69,7 @@ $guardRestoreArgs = @('restore', $guardProject)
 if ($LockedMode) { $guardRestoreArgs += '--locked-mode' }
 & $dotnet @guardRestoreArgs
 if ($LASTEXITCODE -ne 0) { throw 'PowerGuard restore failed.' }
-& $dotnet publish $guardProject -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishTrimmed=false --no-restore -o (Join-Path $build 'guard')
+& $dotnet publish $guardProject -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --no-restore -o (Join-Path $build 'guard')
 if ($LASTEXITCODE -ne 0) { throw 'PowerGuard publish failed.' }
 
 Get-ChildItem -LiteralPath $publish -Filter '*.pdb' -File -ErrorAction SilentlyContinue | Remove-Item -Force
@@ -77,9 +77,16 @@ Copy-Item -LiteralPath (Join-Path $build 'guard\PowerGuard.exe') -Destination $p
 Copy-Item -LiteralPath (Join-Path $root 'LICENSE') -Destination $publish -Force
 Copy-Item -LiteralPath (Join-Path $root 'THIRD-PARTY-NOTICES.md') -Destination $publish -Force
 
+$guardSelfTest = Start-Process (Join-Path $publish 'PowerGuard.exe') -ArgumentList 'self-test' -PassThru -Wait
+if ($guardSelfTest.ExitCode -ne 0) { throw "PowerGuard self-test failed: $($guardSelfTest.ExitCode)" }
+$guardSize = (Get-Item -LiteralPath (Join-Path $publish 'PowerGuard.exe')).Length
+if ($guardSize -ge 15000000) { throw "PowerGuard size regression: $guardSize bytes." }
+
 $selfTest = Start-Process (Join-Path $publish 'YingqiTools.exe') -ArgumentList '--self-test' -PassThru -Wait
 if ($selfTest.ExitCode -ne 0) { throw "Self-test failed: $($selfTest.ExitCode)" }
 $clipboardSmokeData = Join-Path $build 'clipboard-smoke-data'
 $clipboardSmokeTest = Start-Process (Join-Path $publish 'YingqiTools.exe') -ArgumentList @('--clipboard-smoke-test', '--clipboard-smoke-data', $clipboardSmokeData) -PassThru -Wait
 if ($clipboardSmokeTest.ExitCode -ne 0) { throw "Clipboard smoke test failed: $($clipboardSmokeTest.ExitCode)" }
+$appSize = (Get-Item -LiteralPath (Join-Path $publish 'YingqiTools.exe')).Length
+if ($appSize -ge 90000000) { throw "Yingqi Tools size regression: $appSize bytes." }
 Get-ChildItem -LiteralPath $publish -File | Select-Object Name, Length, LastWriteTime
